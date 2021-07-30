@@ -5,10 +5,10 @@ import chisel3.util.log2Ceil
 
 object Parameters {
   // general bus width
-  val ADDR_WIDTH        = 32
+  val ADDR_WIDTH        = 32                          // 地址宽度
   val ADDR_ALIGN_WIDTH  = log2Ceil(ADDR_WIDTH / 8)
-  val DATA_WIDTH        = 32
-  val INST_WIDTH        = 32
+  val DATA_WIDTH        = 32                          // 数据宽度
+  val INST_WIDTH        = 32                          // 指令宽度
 
   // register file
   val REG_COUNT       = 32
