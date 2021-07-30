@@ -1,3 +1,4 @@
+// 顶层模块文件
 package core
 
 import chisel3._
@@ -11,22 +12,22 @@ import consts.Paging.PPN_WIDTH
 
 class Core extends Module {
   val io = IO(new Bundle {
-    // interrupt request
-    val irq   = new InterruptIO
+    // interrupt request，中断请求
+    val irq   = new InterruptIO                     // InterruptIO定义在src/main/scala/io/BusIO.scala，有timer、soft、extern信号
     // TLB/cache control
-    val tlb   = new TlbControlIO(PPN_WIDTH)
-    val cache = new CacheControlIO
+    val tlb   = new TlbControlIO(PPN_WIDTH)         // 定义在src/main/scala/io/BusIO.scala，
+    val cache = new CacheControlIO                  // 定义在src/main/scala/io/BusIO.scala，
     // ROM interface (I-cache)
-    val rom   = new SramIO(ADDR_WIDTH, INST_WIDTH)
+    val rom   = new SramIO(ADDR_WIDTH, INST_WIDTH)  // 定义在src/main/scala/io/BusIO.scala，
     // RAM interface (D-cache)
     val ram   = new SramIO(ADDR_WIDTH, DATA_WIDTH)
     // for trace generating
-    val debug = new DebugIO
+    val debug = new DebugIO                         // 定义src/main/scala/io/DebugIO.scala
   })
 
   // all stages
   val fetch   = Module(new Fetch)
-  val ifid    = Module(new MidStage(new FetchIO))
+  val ifid    = Module(new MidStage(new FetchIO))   // MidStage定义在src/main/scala/utils/MidStage.scala
   val decoder = Module(new Decoder)
   val idex    = Module(new MidStage(new DecoderIO))
   val alu     = Module(new ALU)
