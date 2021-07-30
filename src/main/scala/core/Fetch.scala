@@ -9,8 +9,8 @@ import bpu.BranchPredictor
 class Fetch extends Module {
   val io = IO(new Bundle {
     // pipeline control signals
-    val flush     = Input(Bool())
-    val stall     = Input(Bool())
+    val flush     = Input(Bool())     // 冲刷信号
+    val stall     = Input(Bool())     // 停止信号
     val stallReq  = Output(Bool())
     val flushPc   = Input(UInt(ADDR_WIDTH.W))
     // ROM interface

@@ -3,7 +3,7 @@ package consts
 import chisel3._
 
 object CSR {
-  // privilege levels
+  // 定义RISC-V 的特权级模式，依次为：用户模式、监管者模式、机器模式
   val CSR_MODE_WIDTH  = 2
   val CSR_MODE_U      = "b00".U(CSR_MODE_WIDTH.W)
   val CSR_MODE_S      = "b01".U(CSR_MODE_WIDTH.W)
