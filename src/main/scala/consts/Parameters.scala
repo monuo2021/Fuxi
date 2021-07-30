@@ -1,3 +1,4 @@
+// 参数定义
 package consts
 
 import chisel3._
@@ -10,11 +11,11 @@ object Parameters {
   val DATA_WIDTH        = 32                          // 数据宽度
   val INST_WIDTH        = 32                          // 指令宽度
 
-  // register file
+  // register file，寄存器堆
   val REG_COUNT       = 32
   val REG_ADDR_WIDTH  = log2Ceil(REG_COUNT)
 
-  // branch predictor
+  // branch predictor，分支预测
   val GHR_WIDTH         = 5
   val PHT_SIZE          = 1 << GHR_WIDTH
   val BTB_INDEX_WIDTH   = 6
@@ -22,10 +23,10 @@ object Parameters {
   val BTB_TARGET_WIDTH  = ADDR_WIDTH - ADDR_ALIGN_WIDTH
   val BTB_SIZE          = 1 << BTB_INDEX_WIDTH
 
-  // exception
+  // exception，异常
   val RESET_PC  = "h00000200".U(ADDR_WIDTH.W)
 
-  // TLB
+  // TLB，快表
   val ITLB_WIDTH  = 4                 // 2^4 = 16 entries
   val ITLB_SIZE   = 1 << ITLB_WIDTH
   val DTLB_WIDTH  = 4                 // 2^4 = 16 entries
@@ -41,7 +42,7 @@ object Parameters {
   val DCACHE_LINE_WIDTH = 6                       // 2^6 = 64 bytes/line
   val DCACHE_LINE_SIZE  = 1 << DCACHE_LINE_WIDTH
 
-  // uncached address space
+  // uncached address space，无cache地址空间
   val UNCACHED_ADDR_START = "h10000000".U(ADDR_WIDTH.W)
   val UNCACHED_ADDR_END   = "h20000000".U(ADDR_WIDTH.W)
 }
