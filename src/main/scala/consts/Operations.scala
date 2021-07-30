@@ -3,7 +3,7 @@ package consts
 import chisel3._
 import chisel3.util.log2Ceil
 
-// all operations that supported by ALU
+// all operations that supported by ALU（算术运算单元）
 object AluOp {
   val ALU_OP_WIDTH = log2Ceil(10)
 
@@ -19,7 +19,7 @@ object AluOp {
   val ALU_SRA   = 9.U(ALU_OP_WIDTH.W)
 }
 
-// all operations that supported by MDU
+// all operations that supported by MDU（乘除运算单元）
 object MduOp {
   val MDU_OP_WIDTH = log2Ceil(9)
 
@@ -34,7 +34,7 @@ object MduOp {
   val MDU_REMU    = 8.U(MDU_OP_WIDTH.W)
 }
 
-// all operations that supported by LSU
+// all operations that supported by LSU（存取单元）
 object LsuOp {
   val LSU_OP_WIDTH = log2Ceil(23)
 
@@ -63,7 +63,7 @@ object LsuOp {
   val LSU_FENV  = 22.U(LSU_OP_WIDTH.W)
 }
 
-// all operations that supported by CSR
+// all operations that supported by CSR（控制状态寄存器）
 object CsrOp {
   val CSR_OP_WIDTH = log2Ceil(6)
 
