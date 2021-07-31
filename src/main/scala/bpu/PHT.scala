@@ -1,3 +1,4 @@
+// PHT（Pattern History Table，模式历史表），记录各分支指令的分支历史，用于预测跳转方向
 package bpu
 
 import chisel3._
@@ -17,7 +18,7 @@ class PHT extends Module {
     val taken       = Output(Bool())
   })
 
-  // 2-bit saturation counters
+  // 2-bit saturation counters，2bit饱和计数器
   val init      = Seq.fill(PHT_SIZE) { "b10".U(2.W) }
   val counters  = RegInit(VecInit(init))
 

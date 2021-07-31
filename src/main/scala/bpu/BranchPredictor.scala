@@ -1,3 +1,4 @@
+// 分支预测器
 package bpu
 
 import chisel3._
@@ -13,7 +14,7 @@ class BranchPredictor extends Module {
     val lookupPc    = Input(UInt(ADDR_WIDTH.W))
     val predTaken   = Output(Bool())
     val predTarget  = Output(UInt(ADDR_WIDTH.W))
-    val predIndex   = Output(UInt(GHR_WIDTH.W))
+    val predIndex   = Output(UInt(GHR_WIDTH.W))       // GHR_WIDTH = 5
   })
 
   // instantiate necessary modules
@@ -26,8 +27,8 @@ class BranchPredictor extends Module {
   ghr.io.taken  := io.branchInfo.taken
 
   // wire PHT
-  val index = io.lookupPc(GHR_WIDTH + ADDR_ALIGN_WIDTH - 1,
-                          ADDR_ALIGN_WIDTH) ^ ghr.io.ghr    // G-share
+  val index = io.lookupPc(GHR_WIDTH + ADDR_ALIGN_WIDTH - 1, // 在 Fetch 文件，bpu.io.lookupPc := pc
+                          ADDR_ALIGN_WIDTH) ^ ghr.io.ghr    // 将分支指令的地址和GHR进行异或，再用异或操作的结果来查PHT
   pht.io.lastBranch := io.branchInfo.branch
   pht.io.lastTaken  := io.branchInfo.taken
   pht.io.lastIndex  := io.branchInfo.index

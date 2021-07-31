@@ -52,9 +52,10 @@ class Core extends Module {
   // fetch stage
   fetch.io.flush    := control.io.flushIf
   fetch.io.stall    := control.io.stallIf
-  fetch.io.flushPc  := control.io.flushPc
+  fetch.io.flushPc  := control.io.flushPc         // 这三个是PipelineController单元的控制信号，包括冲刷信号、暂停信号、冲刷后PC值
   fetch.io.rom      <> io.rom
   fetch.io.branch   <> decoder.io.branch
+  // ifid stage
   ifid.io.flush     := control.io.flushIf
   ifid.io.stallPrev := control.io.stallIf
   ifid.io.stallNext := control.io.stallId
