@@ -1,3 +1,4 @@
+// 该文件定义了每个模块的输出信号
 package io
 
 import chisel3._
@@ -20,7 +21,7 @@ class StageIO extends Bundle {
 // IF stage
 class FetchIO extends StageIO {
   // instruction info
-  val valid     = Bool()
+  val valid     = Bool()                // 指令是否有效
   val pc        = UInt(ADDR_WIDTH.W)
   // branch prediction result
   val taken     = Bool()

@@ -47,7 +47,7 @@ class Core extends Module {
 
   // hazard resolve & pipeline control
   val resolve = Module(new HazardResolver)
-  val control = Module(new PipelineController)
+  val control = Module(new PipelineController)    // PipelineController定义在src/main/scala/utils/PipelineController.scala
 
   // fetch stage
   fetch.io.flush    := control.io.flushIf
