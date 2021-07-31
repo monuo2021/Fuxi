@@ -8,7 +8,7 @@ import consts.CsrOp.{CSR_NOP, CSR_R, CSR_W}
 class HazardResolver extends Module {
   val io = IO(new Bundle {
     // regfile read channel from decoder
-    val regRead1  = Flipped(new RegReadIO)
+    val regRead1  = Flipped(new RegReadIO)        // Flipped为翻转端口，把参数里所有的输入转输出，输出转输入。
     val regRead2  = Flipped(new RegReadIO)
     // CSR read channel from ALU
     val csrRead   = Flipped(new CsrReadIO)

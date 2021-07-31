@@ -14,7 +14,7 @@ class Fetch extends Module {
     val stallReq  = Output(Bool())    // 暂停请求
     val flushPc   = Input(UInt(ADDR_WIDTH.W))   // 冲刷后PC
     // ROM interface
-    val rom       = new SramIO(ADDR_WIDTH, INST_WIDTH)
+    val rom       = new SramIO(ADDR_WIDTH, INST_WIDTH)    // SramIO定义在src/main/scala/io/BusIO.scala
     // branch information (from decoder)，分支预测信息
     val branch    = Input(new BranchInfoIO)               // 定义在src/main/scala/io/BranchInfoIO.scala，定义了分支预测器的分支信息
     // to next stage

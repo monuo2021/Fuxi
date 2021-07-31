@@ -46,7 +46,7 @@ class Core extends Module {
   val excMon  = Module(new ExclusiveMonitor)
 
   // hazard resolve & pipeline control
-  val resolve = Module(new HazardResolver)
+  val resolve = Module(new HazardResolver)        // HazardResolver定义在src/main/scala/utils/HazardResolver.scala
   val control = Module(new PipelineController)    // PipelineController定义在src/main/scala/utils/PipelineController.scala
 
   // fetch stage

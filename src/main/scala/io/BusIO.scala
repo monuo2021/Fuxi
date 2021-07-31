@@ -4,11 +4,11 @@ import chisel3._
 
 // SRAM interface
 class SramIO(val addrWidth: Int, val dataWidth: Int) extends Bundle {
-  // enable signal
+  // enable signal，使能信号
   val en    = Output(Bool())
-  // data valid flag
+  // data valid flag，数据有效信号
   val valid = Input(Bool())
-  // page fault flag
+  // page fault flag，页确实信号
   val fault = Input(Bool())
   // other signals
   val wen   = Output(UInt((dataWidth / 8).W))
