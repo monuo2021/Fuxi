@@ -1,3 +1,4 @@
+// BTB（Branch Target Buffer, 分支目标缓冲器）
 package bpu
 
 import chisel3._
@@ -28,16 +29,16 @@ class BTB extends Module {
   })
 
   // definitions of BTB lines and valid bits
-  val valids  = RegInit(VecInit(Seq.fill(BTB_SIZE) { false.B }))
+  val valids  = RegInit(VecInit(Seq.fill(BTB_SIZE) { false.B }))    // BTB_SIZE = 1 << 6
   val lines   = Mem(BTB_SIZE, new BtbLine)
 
-  // branch info for BTB lines
-  val index   = io.pc(BTB_INDEX_WIDTH + ADDR_ALIGN_WIDTH - 1,
+  // branch info for BTB lines，BTB里的历史记录
+  val index   = io.pc(BTB_INDEX_WIDTH + ADDR_ALIGN_WIDTH - 1,       // pc的 7~2 位
                       ADDR_ALIGN_WIDTH)
-  val linePc  = io.pc(ADDR_WIDTH - 1, BTB_INDEX_WIDTH + ADDR_ALIGN_WIDTH)
+  val linePc  = io.pc(ADDR_WIDTH - 1, BTB_INDEX_WIDTH + ADDR_ALIGN_WIDTH) // pc 31~8 位
 
-  // write to BTB lines
-  when (io.branch) {
+  // write to BTB lines，更新BTB记录
+  when (io.branch) {                // 如果是跳转指令
     valids(index)       := true.B
     lines(index).jump   := io.jump
     lines(index).pc     := linePc
@@ -52,8 +53,8 @@ class BTB extends Module {
   val btbHit      = valids(lookupIndex) &&
                     lines(lookupIndex).pc === lookupPcSel
 
-  // BTB lookup
-  io.lookupBranch := btbHit
+  // BTB lookup，关键步骤
+  io.lookupBranch := btbHit           // BTB命中
   io.lookupJump   := Mux(btbHit, lines(lookupIndex).jump, false.B)
   io.lookupTarget := Cat(Mux(btbHit, lines(lookupIndex).target, 0.U),
                          0.U(ADDR_ALIGN_WIDTH.W))
