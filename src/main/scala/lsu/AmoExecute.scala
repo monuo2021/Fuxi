@@ -23,14 +23,14 @@ class AmoExecute extends Module {
   })
   
   // state of finite state machine
-  val sIdle :: sStore :: sEnd :: Nil = Enum(3)
-  val state = RegInit(sIdle)
+  val sIdle :: sStore :: sEnd :: Nil = Enum(3)    // Enum来表示状态，Enum的参数是状态的数量。使用switch来描述状态转移。
+  val state = RegInit(sIdle)                      // switch 在 50 行
 
-  // operands
+  // 操作数
   val opr1 = io.ramRdata
   val opr2 = io.regOpr
 
-  // generate execute result
+  // 生成执行结果
   val result = MuxLookup(io.op, 0.U, Seq(
     AMO_OP_SWAP -> opr2,
     AMO_OP_ADD  -> (opr1 + opr2),
@@ -43,10 +43,11 @@ class AmoExecute extends Module {
     AMO_OP_MAXU -> Mux(opr1 > opr2, opr1, opr2),
   ))
 
-  // finite state machine
+  // 有穷状态机
   when (io.flush) {
     state := sIdle
   } .elsewhen (io.ramValid) {
+    // 状态转移
     switch (state) {
       // send read request to RAM
       is (sIdle) {

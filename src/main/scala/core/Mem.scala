@@ -33,9 +33,9 @@ class Mem extends Module {
     val csrBusy   = Input(Bool())
     val csrMode   = Input(UInt(CSR_MODE_WIDTH.W))
     // exclusive monitor check channel
-    val excMon    = new ExcMonCheckIO
+    val excMon    = new ExcMonCheckIO             // src/main/scala/io/ExcMonIO.scala
     // exception information
-    val except    = Output(new ExceptInfoIO)
+    val except    = Output(new ExceptInfoIO)      // src/main/scala/io/ExceptInfoIO.scala
     // to next stage
     val mem       = Output(new MemIO)
   })
@@ -44,15 +44,15 @@ class Mem extends Module {
   val ((en: Bool) :: (wen: Bool) :: (load: Bool) :: width ::
        (signed: Bool) :: (setExcMon: Bool) :: (checkExcMon: Bool) ::
        amoOp :: (flushIc: Bool) :: (flushDc: Bool) :: (flushIt: Bool) ::
-       (flushDt: Bool) :: Nil) = ListLookup(io.alu.lsuOp, DEFAULT, TABLE)
+       (flushDt: Bool) :: Nil) = ListLookup(io.alu.lsuOp, DEFAULT, TABLE)     // DEFAULT、TABLE定义在src/main/scala/lsu/LsuDecode.scala
 
   // address of memory accessing
   val addr  = Cat(io.alu.reg.data(ADDR_WIDTH - 1, ADDR_ALIGN_WIDTH),
                   0.U(ADDR_ALIGN_WIDTH.W))
   val sel   = io.alu.reg.data(ADDR_ALIGN_WIDTH - 1, 0)
 
-  // AMO execute unit
-  val amo = Module(new AmoExecute)
+  // AMO execute unit，原子指令执行模块
+  val amo = Module(new AmoExecute)      // src/main/scala/lsu/AmoExecute.scala
   amo.io.op       := amoOp
   amo.io.flush    := io.flush
   amo.io.regOpr   := io.alu.lsuData

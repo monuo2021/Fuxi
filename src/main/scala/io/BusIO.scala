@@ -8,7 +8,7 @@ class SramIO(val addrWidth: Int, val dataWidth: Int) extends Bundle {
   val en    = Output(Bool())
   // data valid flag，数据有效信号
   val valid = Input(Bool())
-  // page fault flag，页确实信号
+  // page fault flag，页缺失信号
   val fault = Input(Bool())
   // other signals
   val wen   = Output(UInt((dataWidth / 8).W))
