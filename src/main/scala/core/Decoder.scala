@@ -135,19 +135,25 @@ class Decoder extends Module {
   io.branch.target  := branchTarget
 
   // signals to next stage
+  // to ALU/MDU
   io.decoder.aluOp      := aluOp
   io.decoder.opr1       := generateOpr(aluSrc1).asUInt
   io.decoder.opr2       := generateOpr(aluSrc2).asUInt
   io.decoder.mduOp      := mduOperation
+  // to Mem (LSU)
   io.decoder.lsuOp      := lsuOperation
   io.decoder.lsuData    := io.read2.data
+  // to write back
   io.decoder.regWen     := regWen
   io.decoder.regWaddr   := rd
+  // to CSR
   io.decoder.csrOp      := csrOperation
   io.decoder.csrAddr    := immI
   io.decoder.csrData    := csrData
+  // exception information
   io.decoder.excType    := exceptType
   io.decoder.excValue   := exceptValue
+  // instruction info
   io.decoder.valid      := io.fetch.valid
   io.decoder.inst       := inst
   io.decoder.currentPc  := io.fetch.pc
