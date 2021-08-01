@@ -44,7 +44,7 @@ class ALU extends Module {
     ALU_SRA   -> (opr1.asSInt >> shamt).asUInt,
   ))
 
-  // multiplication & division unit
+  // multiplication & division unit，乘除模块
   val mdu       = Module(new MDU)
   mdu.io.flush  := io.flush
   mdu.io.op     := io.decoder.mduOp
@@ -58,7 +58,7 @@ class ALU extends Module {
   val excType = Mux(csrEn && !io.csrRead.valid,
                     EXC_ILLEG, io.decoder.excType)
 
-  // commit to write back
+  // commit to write back，提交给写回
   val result  = Mux(csrEn, io.csrRead.data,
                 Mux(io.decoder.mduOp =/= MDU_NOP, mduResult, aluResult))
   val load    = io.decoder.lsuOp =/= LSU_NOP && io.decoder.regWen

@@ -31,7 +31,7 @@ class Decoder extends Module {
     val decoder = Output(new DecoderIO)
   })
 
-  // fetch instruction data from ROM
+  // fetch instruction data from ROM。一、确定指令
   // TODO: a little bit tricky and ugly, fix it?
   val stallDelay  = RegNext(io.stallId)                 // RegNext()把输入延迟一个周期
   val lastInst    = Reg(UInt(INST_WIDTH.W))
@@ -39,19 +39,19 @@ class Decoder extends Module {
                     Mux(stallDelay, lastInst, io.inst))
   when (!stallDelay) { lastInst := io.inst }
 
-  // regfile addresses
-  val rd  = inst(11, 7)         // 目标寄存器 ，7~11 为
+  // regfile addresses，二、确定寄存器地址
+  val rd  = inst(11, 7)         // 目标寄存器 ，7~11
   val rs1 = inst(19, 15)        // 两个源寄存器，15~19、20~24
   val rs2 = inst(24, 20)
 
-  // immediate
+  // immediate。三、确定立即数
   val immI  = inst(31, 20)      // I 型指令（短立即数和访存指令），立即数 20~31位
   val immS  = Cat(inst(31, 25), inst(11, 7))      // S 型指令（访存store的指令）立即数，立即数为7~11位，25~31位。
   val immB  = Cat(inst(31), inst(7), inst(30, 25), inst(11, 8), 0.U(1.W)) // B型指令（条件跳转指令）立即数
   val immU  = Cat(inst(31, 12), 0.U(12.W))                                // U型指令（长立即数）
   val immJ  = Cat(inst(31), inst(19, 12), inst(20), inst(30, 21), 0.U(1.W)) // J型指令（无条件跳转）
 
-  // operand generator
+  // 操作数生成器，生成执行阶段的操作数
   def generateOpr(oprSel: UInt) =
       MuxLookup(oprSel, 0.S, Seq(
         OPR_REG1  -> io.read1.data.asSInt,
@@ -67,9 +67,9 @@ class Decoder extends Module {
   // control signals，译码关键模块。通过指令类型来得到信号，就是单周期CPU的if-else语句部分
   val ((regEn1: Bool) :: (regEn2: Bool) :: (regWen: Bool) ::
        aluSrc1 :: aluSrc2 :: aluOp :: branchFlag :: lsuOp :: csrOp ::
-       mduOp :: excType :: Nil) = ListLookup(inst, DEFAULT, TABLE)      // DEFAULT、TABLE 在src/main/scala/consts/Control.scala
+       mduOp :: excType :: Nil) = ListLookup(inst, DEFAULT, TABLE) // DEFAULT、TABLE 在src/main/scala/consts/Control.scala
   
-  // branch taken/target
+  // branch taken/target，用于更新分支预测器，分支是否跳转，跳转地址为
   val isBranch    = branchFlag =/= BR_N         // 不相等，是BR_N，isBranch = 0，表示不是条件跳转指令
   val isJump      = branchFlag === BR_AL        // 相等
   val targetJAL   = (io.fetch.pc.asSInt + immJ.asSInt).asUInt   // jal指令，newpc = pc + immJ
@@ -77,7 +77,7 @@ class Decoder extends Module {
   val targetJALR  = Cat(sumR1immI(ADDR_WIDTH - 1, 1), 0.U)
   val targetJ     = Mux(regEn1, targetJALR, targetJAL)
   val targetB     = (io.fetch.pc.asSInt + immB.asSInt).asUInt   // 条件指令，newpc = pc + immB
-  // 条件判断
+  // 条件指令条件判断，本是在执行阶段进行。
   val branchTaken = MuxLookup(branchFlag, false.B, Seq(
     BR_AL   -> true.B,
     BR_EQ   -> (io.read1.data === io.read2.data),
@@ -87,17 +87,17 @@ class Decoder extends Module {
     BR_LTU  -> (io.read1.data < io.read2.data),
     BR_GEU  -> (io.read1.data >= io.read2.data),
   ))
-  val branchTarget  = Mux(branchFlag === BR_N, 0.U,         // 非条件跳转，branchTarget = 0
+  val branchTarget  = Mux(branchFlag === BR_N, 0.U,         // 如果不是跳转指令，branchTarget = 0；是直接跳转，branchTarget = targetJ；是条件跳转，branchTarget = targetB
                       Mux(isJump, targetJ, targetB))
-  val branchMiss  = io.fetch.taken =/= branchTaken ||       // 信号，表示预测与实际不符
+  val branchMiss  = io.fetch.taken =/= branchTaken ||       // 预测错误信号，表示预测与实际不符；如果不调转，或者跳转但目标地址错误
                     (branchTaken && io.fetch.target =/= branchTarget)
-  val flushPc     = Mux(branchTaken, branchTarget, io.fetch.pc + 4.U)   
+  val flushPc     = Mux(branchTaken, branchTarget, io.fetch.pc + 4.U)   // 如果预测跳转，pc = branchTarget，否则 pc + 4
   val addrFault   = branchTaken &&
                     branchTarget(ADDR_ALIGN_WIDTH - 1, 0) =/= 0.U
 
-  // CSR related signals，CSR相关信号
+  // CSR related signals，CSR相关指令信号
   val csrActOp  = MuxLookup(csrOp, CSR_NOP, Seq(
-    CSR_RW  -> Mux(rd === 0.U, CSR_W, CSR_RW),
+    CSR_RW  -> Mux(rd === 0.U, CSR_W, CSR_RW),      // rd = 0，无法将 CSR 寄存器读入 rd 寄存器，csrActOp = CSR_W.
     CSR_RS  -> Mux(rs1 === 0.U, CSR_R, CSR_RS),
     CSR_RC  -> Mux(rs1 === 0.U, CSR_R, CSR_RC),
   ))
@@ -116,8 +116,8 @@ class Decoder extends Module {
   val lsuOperation  = Mux(illegalFetch, LSU_NOP, lsuOp)
   val csrOperation  = Mux(illegalFetch, CSR_NOP, csrActOp)
 
-  // pipeline control
-  io.flushIf  := !io.stallId && !addrFault && branchMiss
+  // pipeline control，冲刷信号
+  io.flushIf  := !io.stallId && !addrFault && branchMiss    // 译码阶段不暂停、无地址错误、分支预测错误，则取指阶段冲刷
   io.flushPc  := flushPc
 
   // regfile read signals，寄存器读信号
