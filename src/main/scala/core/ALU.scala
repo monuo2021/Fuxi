@@ -30,7 +30,7 @@ class ALU extends Module {
   val opr2  = io.decoder.opr2
   val shamt = opr2(4, 0)
 
-  // result of ALU
+  // ALU 运算结果
   val aluResult = MuxLookup(io.decoder.aluOp, 0.U, Seq(
     ALU_ADD   -> (opr1 + opr2),
     ALU_SUB   -> (opr1 - opr2),
@@ -44,8 +44,8 @@ class ALU extends Module {
     ALU_SRA   -> (opr1.asSInt >> shamt).asUInt,
   ))
 
-  // multiplication & division unit，乘除模块
-  val mdu       = Module(new MDU)
+  // 乘除模块
+  val mdu       = Module(new MDU)           // MDU 定义在src/main/scala/mdu/MDU.scala
   mdu.io.flush  := io.flush
   mdu.io.op     := io.decoder.mduOp
   mdu.io.opr1   := opr1.asUInt
@@ -64,25 +64,30 @@ class ALU extends Module {
   val load    = io.decoder.lsuOp =/= LSU_NOP && io.decoder.regWen
 
   // pipeline control signals
-  io.stallReq := !mdu.io.valid
+  io.stallReq := !mdu.io.valid        // 如果乘除模块指令无效，发出暂停请求
 
   // read data from CSR
   io.csrRead.op   := io.decoder.csrOp
   io.csrRead.addr := io.decoder.csrAddr
 
   // signals to next stage
+  // to Mem (LSU)
   io.alu.lsuOp        := io.decoder.lsuOp
   io.alu.lsuData      := io.decoder.lsuData
+  // to write back
   io.alu.reg.en       := io.decoder.regWen
   io.alu.reg.addr     := io.decoder.regWaddr
   io.alu.reg.data     := result
   io.alu.reg.load     := load
+  // to CSR
   io.alu.csr.op       := io.decoder.csrOp
   io.alu.csr.addr     := io.decoder.csrAddr
   io.alu.csr.data     := io.decoder.csrData
   io.alu.csr.retired  := retired
+  // exception information
   io.alu.excType      := excType
   io.alu.excValue     := io.decoder.excValue
+  // instruction info
   io.alu.valid        := io.decoder.valid
   io.alu.inst         := io.decoder.inst
   io.alu.currentPc    := io.decoder.currentPc
