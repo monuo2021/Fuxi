@@ -83,15 +83,15 @@ class Mem extends Module {
   ))
   val wdata   = Mux(wen || checkExcMon, lsuData, amo.io.ramWdata)
 
-  // stall request
-  val memStall  = Mux(amoOp =/= AMO_OP_NOP, !amo.io.ready,
-                      en && !io.ram.valid)
+  // stall request，暂停请求
+  val memStall  = Mux(amoOp =/= AMO_OP_NOP, !amo.io.ready,    // amoOp = AMO_OP_NOP，memStall = en && !io.ram.valid
+                      en && !io.ram.valid)                    // amoOp = 原子指令，此时 AMO 不是最终状态（要么空闲、要么store）
   val fencStall = flushDc && !io.ram.valid
   val stallReq  = memStall || fencStall || io.csrBusy
 
-  // write back data
+  // write back data，写回数据
   val data = Mux(checkExcMon, Mux(io.excMon.valid, 0.U, 1.U),
-             Mux(amoOp =/= AMO_OP_NOP, amo.io.regWdata, io.alu.reg.data))
+             Mux(amoOp =/= AMO_OP_NOP, amo.io.regWdata, io.alu.reg.data))     // 该局为关键，判断指令是否是原子指令
 
   // exclusive monitor clear flag
   val clearEm = wen || checkExcMon || amoOp =/= AMO_OP_NOP
@@ -104,7 +104,7 @@ class Mem extends Module {
     LS_DATA_WORD  -> (sel(1, 0) =/= 0.U),
   ))
   val memExcept = memAddr || io.ram.fault
-  // signals about instruction exceptions
+  // signals about instruction exceptions，指令异常信号
   val illgSret  = io.alu.excType === EXC_SRET && io.csrMode === CSR_MODE_U
   val illgMret  = io.alu.excType === EXC_MRET && io.csrMode =/= CSR_MODE_M
   val illgSpriv = io.alu.excType === EXC_SPRIV && io.csrMode === CSR_MODE_U
@@ -112,7 +112,7 @@ class Mem extends Module {
   val instPage  = io.alu.excType === EXC_IPAGE
   val instIllg  = io.alu.excType === EXC_ILLEG ||
                   illgSret || illgMret || illgSpriv
-  // whether exception occurred
+  // whether exception occurred，是否发生异常
   val excMem    = io.alu.excType === EXC_LOAD ||
                   io.alu.excType === EXC_STAMO
   val excOther  = io.alu.excType === EXC_ECALL ||
