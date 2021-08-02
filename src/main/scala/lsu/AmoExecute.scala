@@ -1,4 +1,4 @@
-// 原子操作执行文件
+// 原子操作执行，原子指令是为了解决同步的问题
 package lsu
 
 import chisel3._
@@ -10,7 +10,7 @@ import consts.Parameters._
 class AmoExecute extends Module {
   val io = IO(new Bundle {
     // control signals
-    val op        = Input(UInt(AMO_OP_WIDTH.W))
+    val op        = Input(UInt(AMO_OP_WIDTH.W))         // AMO_OP_WIDTH = 4
     val flush     = Input(Bool())
     val ready     = Output(Bool())
     // data from/to regfile (lsuData/result)

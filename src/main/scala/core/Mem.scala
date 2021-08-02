@@ -46,16 +46,16 @@ class Mem extends Module {
        amoOp :: (flushIc: Bool) :: (flushDc: Bool) :: (flushIt: Bool) ::
        (flushDt: Bool) :: Nil) = ListLookup(io.alu.lsuOp, DEFAULT, TABLE)     // DEFAULT、TABLE定义在src/main/scala/lsu/LsuDecode.scala
 
-  // address of memory accessing，多体交叉存储器？
+  // address of memory accessing，多体交叉存储器？sel 为体号，addr为地址
   val addr  = Cat(io.alu.reg.data(ADDR_WIDTH - 1, ADDR_ALIGN_WIDTH),          // io.alu.reg.data是load、store指令运算所得的内存地址
                   0.U(ADDR_ALIGN_WIDTH.W))
   val sel   = io.alu.reg.data(ADDR_ALIGN_WIDTH - 1, 0)
 
-  // AMO execute unit，原子指令执行模块
+  // AMO execute unit，原子指令执行模块，通过对LS指令译码，获得 AMO 指令（在该文件 44 行进行）。
   val amo = Module(new AmoExecute)      // src/main/scala/lsu/AmoExecute.scala
   amo.io.op       := amoOp
   amo.io.flush    := io.flush
-  amo.io.regOpr   := io.alu.lsuData
+  amo.io.regOpr   := io.alu.lsuData     // 该数据来自 HazardResolver 模块
   amo.io.ramValid := io.ram.valid
   amo.io.ramRdata := io.ram.rdata
 
