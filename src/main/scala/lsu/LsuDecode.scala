@@ -1,3 +1,4 @@
+// LS指令译码模块，关键是 TABLE
 package lsu
 
 import chisel3._

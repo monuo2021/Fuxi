@@ -46,8 +46,8 @@ class Mem extends Module {
        amoOp :: (flushIc: Bool) :: (flushDc: Bool) :: (flushIt: Bool) ::
        (flushDt: Bool) :: Nil) = ListLookup(io.alu.lsuOp, DEFAULT, TABLE)     // DEFAULT、TABLE定义在src/main/scala/lsu/LsuDecode.scala
 
-  // address of memory accessing
-  val addr  = Cat(io.alu.reg.data(ADDR_WIDTH - 1, ADDR_ALIGN_WIDTH),
+  // address of memory accessing，多体交叉存储器？
+  val addr  = Cat(io.alu.reg.data(ADDR_WIDTH - 1, ADDR_ALIGN_WIDTH),          // io.alu.reg.data是load、store指令运算所得的内存地址
                   0.U(ADDR_ALIGN_WIDTH.W))
   val sel   = io.alu.reg.data(ADDR_ALIGN_WIDTH - 1, 0)
 
@@ -70,7 +70,7 @@ class Mem extends Module {
   val amoWen  = Mux(amo.io.ramWen, selWord, 0.U)
   val ramWen  = Mux(wen, writeEn, Mux(checkExcMon, scWen, amoWen))
 
-  // write data
+  // write data，写数据
   def mapWriteData(i: Int, w: Int) =
       (i * w / 8).U -> (io.alu.lsuData << (i * w))
   val byteSeq = 0 until ADDR_WIDTH /  8 map { i => mapWriteData(i,  8) }
