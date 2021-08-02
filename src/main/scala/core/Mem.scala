@@ -72,8 +72,8 @@ class Mem extends Module {
 
   // write data，写数据
   def mapWriteData(i: Int, w: Int) =
-      (i * w / 8).U -> (io.alu.lsuData << (i * w))
-  val byteSeq = 0 until ADDR_WIDTH /  8 map { i => mapWriteData(i,  8) }
+      (i * w / 8).U -> (io.alu.lsuData << (i * w))                        // lsuData为要ls指令写入的数据
+  val byteSeq = 0 until ADDR_WIDTH /  8 map { i => mapWriteData(i,  8) }  // ADDR_WIDTH = 32
   val halfSeq = 0 until ADDR_WIDTH / 16 map { i => mapWriteData(i, 16) }
   val wordSeq = 0 until ADDR_WIDTH / 32 map { i => mapWriteData(i, 32) }
   val lsuData = MuxLookup(width, 0.U, Seq(
@@ -81,7 +81,7 @@ class Mem extends Module {
     LS_DATA_HALF -> MuxLookup(sel, 0.U, halfSeq),
     LS_DATA_WORD -> MuxLookup(sel, 0.U, wordSeq),
   ))
-  val wdata   = Mux(wen || checkExcMon, lsuData, amo.io.ramWdata)
+  val wdata   = Mux(wen || checkExcMon, lsuData, amo.io.ramWdata)         // amo.io.ramWdata 为原子指令写入内存的数据
 
   // stall request，暂停请求
   val memStall  = Mux(amoOp =/= AMO_OP_NOP, !amo.io.ready,    // amoOp = AMO_OP_NOP，memStall = en && !io.ram.valid
