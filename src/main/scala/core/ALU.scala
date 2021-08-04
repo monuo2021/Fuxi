@@ -61,7 +61,7 @@ class ALU extends Module {
   // commit to write back，提交给写回
   val result  = Mux(csrEn, io.csrRead.data,
                 Mux(io.decoder.mduOp =/= MDU_NOP, mduResult, aluResult))
-  val load    = io.decoder.lsuOp =/= LSU_NOP && io.decoder.regWen
+  val load    = io.decoder.lsuOp =/= LSU_NOP && io.decoder.regWen           // load 指令标志；当该指令为Load指令，且需要写回，则 load = 1
 
   // pipeline control signals
   io.stallReq := !mdu.io.valid        // 如果乘除模块指令无效，发出暂停请求

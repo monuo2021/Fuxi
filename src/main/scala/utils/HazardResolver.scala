@@ -7,7 +7,7 @@ import consts.CsrOp.{CSR_NOP, CSR_R, CSR_W}
 
 class HazardResolver extends Module {
   val io = IO(new Bundle {
-    // regfile read channel from decoder
+    // regfile read channel to decoder
     val regRead1  = Flipped(new RegReadIO)        // Flipped为翻转端口，把参数里所有的输入转输出，输出转输入。
     val regRead2  = Flipped(new RegReadIO)
     // CSR read channel from ALU
@@ -34,11 +34,11 @@ class HazardResolver extends Module {
     val loadFlag  = Output(Bool())
     val csrFlag   = Output(Bool())
   })
-
-  def forwardReg(read: RegReadIO, rf: RegReadIO) = {
+  // 前递，read、rf 为从寄存器堆读出的数据
+  def forwardReg(read: RegReadIO, rf: RegReadIO) = {                  // read是传给译码阶段，是指令中参与运算的寄存器值。
     when (read.en && read.addr =/= 0.U) {
-      when (io.aluReg.en && read.addr === io.aluReg.addr) {
-        read.data := io.aluReg.data
+      when (io.aluReg.en && read.addr === io.aluReg.addr) {           // 如果是alu运算后要写回，且写回地址是下一指令所需寄存器地址
+        read.data := io.aluReg.data                                   // 将执行阶段的结果前递给下一条指令的操作数
       } .elsewhen (io.memReg.en && read.addr === io.memReg.addr) {
         read.data := io.memReg.data
       } .elsewhen (io.wbReg.en && read.addr === io.wbReg.addr) {
@@ -68,8 +68,8 @@ class HazardResolver extends Module {
   }
 
   def resolveLoadHazard(read: RegReadIO) = {
-    val aluLoad = io.aluReg.load && read.addr === io.aluReg.addr
-    val memLoad = io.memReg.load && read.addr === io.memReg.addr
+    val aluLoad = io.aluReg.load && read.addr === io.aluReg.addr      // load 指令标志；如果指令（执行阶段）为 load 指令且写入寄存器的地址等于下一指令所需寄存器地址
+    val memLoad = io.memReg.load && read.addr === io.memReg.addr      
     read.en && (aluLoad || memLoad)
   }
 

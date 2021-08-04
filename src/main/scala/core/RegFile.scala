@@ -12,7 +12,8 @@ class RegFile extends Module {
     val write = Flipped(new RegWriteIO)
   })
 
-  val init = Seq.fill(REG_COUNT) { 0.U(DATA_WIDTH.W) }
+  // 定义寄存器堆
+  val init = Seq.fill(REG_COUNT) { 0.U(DATA_WIDTH.W) }      // REG_COUNT = 32
   val regfile = RegInit(VecInit(init))
 
   // read channels
