@@ -9,8 +9,8 @@ import consts.Parameters._
 class PipelineController extends Module {
   val io = IO(new Bundle {
     // stall request from pipeline stages
-    val fetch     = Input(Bool())
-    val alu       = Input(Bool())
+    val fetch     = Input(Bool())                 // rom无效时，暂停请求。
+    val alu       = Input(Bool())                 // 如果乘除模块指令无效，发出暂停请求
     val mem       = Input(Bool())
     // flush request from pipeline stages
     val decFlush  = Input(Bool())
