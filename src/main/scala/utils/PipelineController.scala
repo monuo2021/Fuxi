@@ -13,10 +13,10 @@ class PipelineController extends Module {
     val alu       = Input(Bool())                 // 如果乘除模块指令无效，发出暂停请求
     val mem       = Input(Bool())
     // flush request from pipeline stages
-    val decFlush  = Input(Bool())
-    val decTarget = Input(UInt(ADDR_WIDTH.W))
-    val memFlush  = Input(Bool())
-    val memTarget = Input(UInt(ADDR_WIDTH.W))
+    val decFlush  = Input(Bool())                 // 译码阶段不暂停、无地址错误、分支预测错误，则取指阶段冲刷
+    val decTarget = Input(UInt(ADDR_WIDTH.W))     // 译码阶段，如果预测跳转，decTarget = branchTarget，否则 decTarget = pc + 4
+    val memFlush  = Input(Bool())                 // 执行fence.i指令的时候，冲刷(flush)指令缓存(Icache, instruction cache)和指令管线(instruction pipeline)。
+    val memTarget = Input(UInt(ADDR_WIDTH.W))     // memTarget = io.alu.currentPc + 4.U
     // hazard flags
     val load      = Input(Bool())
     val csr       = Input(Bool())

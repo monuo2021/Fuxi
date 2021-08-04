@@ -144,7 +144,7 @@ class Mem extends Module {
 
   // pipeline control
   io.stallReq := stallReq
-  io.flushReq := !stallReq && (flushIc || flushIt)
+  io.flushReq := !stallReq && (flushIc || flushIt)      // 执行fence.i指令的时候，冲刷(flush)指令缓存(Icache, instruction cache)和指令管线(instruction pipeline)。
   io.flushPc  := io.alu.currentPc + 4.U
 
   // RAM control signals
