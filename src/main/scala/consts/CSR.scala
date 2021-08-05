@@ -40,13 +40,13 @@ object CSR {
   // machine trap setup
   val CSR_MSTATUS     = 0x300.U(CSR_ADDR_WIDTH.W)   // 机器模式状态寄存器，Mstatus寄存器中的 MIE 域和 MPIE 域用于反映中断全局使能
   val CSR_MISA        = 0x301.U(CSR_ADDR_WIDTH.W)   // 机器模式指令集架构寄存器
-  val CSR_MEDELEG     = 0x302.U(CSR_ADDR_WIDTH.W)
-  val CSR_MIDELEG     = 0x303.U(CSR_ADDR_WIDTH.W)
+  val CSR_MEDELEG     = 0x302.U(CSR_ADDR_WIDTH.W)   // (Machine Exception Delegation，机器异常委托)
+  val CSR_MIDELEG     = 0x303.U(CSR_ADDR_WIDTH.W)   // (Machine Interrupt Delegation，机器中断委托) ，指示哪些中断将委托给监管者模式。
   val CSR_MIE         = 0x304.U(CSR_ADDR_WIDTH.W)   // 机器模式中断使能寄存器，用于控制不同类型中断的局部使能
   val CSR_MTVEC       = 0x305.U(CSR_ADDR_WIDTH.W)   // 机器模式异常入口基地址寄存器，定义进入异常的程序 PC 地址
   val CSR_MCOUNTEREN  = 0x306.U(CSR_ADDR_WIDTH.W)   
   // machine trap handling
-  val CSR_MSCRATCH    = 0x340.U(CSR_ADDR_WIDTH.W)
+  val CSR_MSCRATCH    = 0x340.U(CSR_ADDR_WIDTH.W)   // 保存一个指向机器模式hart-local上下文空间的指针，并在进入m模式陷阱处理程序时与用户寄存器交换。可用于上下文切换
   val CSR_MEPC        = 0x341.U(CSR_ADDR_WIDTH.W)   // 机器模式异常 PC 寄存器，用于保存异常的返回地址
   val CSR_MCAUSE      = 0x342.U(CSR_ADDR_WIDTH.W)   // 机器模式状态寄存器，反映进入异常的原因
   val CSR_MTVAL       = 0x343.U(CSR_ADDR_WIDTH.W)   // 机器模式异常值寄存器，反映进入异常的信息

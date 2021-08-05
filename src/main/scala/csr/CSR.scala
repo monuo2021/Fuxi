@@ -239,7 +239,7 @@ class MisaCsr extends CsrBundle {
 
   override def <=(data: UInt) = {}
 }
-
+// 定义了机器模式指令集架构寄存器，可参看https://blog.csdn.net/Pandacooker/article/details/116423306
 object MisaCsr extends CsrObject[MisaCsr] {
   def apply() = new MisaCsr
   override def default() = "h40141101".U.asTypeOf(apply())
