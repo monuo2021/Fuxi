@@ -36,7 +36,7 @@ class CsrFile extends Module {
   })
 
   // current privilege mode
-  val mode      = RegInit(CSR_MODE_M)
+  val mode      = RegInit(CSR_MODE_M)   // CSR_MODE_M = "b11".U(CSR_MODE_WIDTH.W)
 
   // definition of CSRs
   val mstatus   = RegInit(MstatusCsr.default)
