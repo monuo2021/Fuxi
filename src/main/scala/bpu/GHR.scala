@@ -17,7 +17,7 @@ class GHR extends Module {
     val branch  = Input(Bool())
     val taken   = Input(Bool())
     // value of GHR
-    val ghr     = Output(UInt(GHR_WIDTH.W))
+    val ghr     = Output(UInt(GHR_WIDTH.W))       // GHR_WIDTH = 5
   })
 
   val ghr = Reg(UInt(GHR_WIDTH.W))
