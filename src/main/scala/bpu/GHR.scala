@@ -22,7 +22,7 @@ class GHR extends Module {
 
   val ghr = Reg(UInt(GHR_WIDTH.W))
 
-  when (io.branch) {                              // 如果是分支跳转
+  when (io.branch) {                              // 如果是分支跳转指令
     ghr := Cat(ghr(GHR_WIDTH - 2, 0), io.taken)
   }
 

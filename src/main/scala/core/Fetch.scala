@@ -37,7 +37,7 @@ class Fetch extends Module {
   pc := nextPc
 
   // pipeline control signals，
-  io.stallReq := !io.rom.valid                      // rom中指令无效时，暂停请求。
+  io.stallReq := !io.rom.valid                      // rom中指令无效时，请求暂停。
 
   // ROM control signals
   io.rom.en     := true.B
