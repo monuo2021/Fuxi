@@ -58,7 +58,7 @@ class MMU(val size: Int, val isInst: Boolean) extends Module {
   // some other registers
   val entry = Reg(new TlbEntry)
   val addr  = Reg(UInt(ADDR_WIDTH.W))
-  val level = Reg(UInt(LEVEL_WIDTH.W))
+  val level = Reg(UInt(LEVEL_WIDTH.W))                              // LEVEL_WIDTH = 1，LEVELS = 2
   val pte   = io.data.rdata(PTE_WIDTH - 1, 0).asTypeOf(new PTE)
 
   // TLB
@@ -99,7 +99,7 @@ class MMU(val size: Int, val isInst: Boolean) extends Module {
         // perform TLB flush
         state := sFlush
       } .elsewhen (io.en) {
-        // entry not found in TLB
+        // entry not found in TLB，如果需要向内存取数，但 TLB 中没找到，则访问第二级页表
         when (io.lookup && !tlb.io.valid) {
           state := sAddr
           addr  := getPteAddr(io.basePpn, io.vaddr, (LEVELS - 1).U)
@@ -135,7 +135,7 @@ class MMU(val size: Int, val isInst: Boolean) extends Module {
         // leaf PTE not found
         raisePageFault()
       } .otherwise {
-        // fetch next PTE
+        // fetch next PTE，访问下一页表
         state := sAddr
         addr  := getPteAddr(pte.ppn, io.vaddr, level - 1.U)
         level := level - 1.U
