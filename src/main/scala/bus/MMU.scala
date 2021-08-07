@@ -8,16 +8,16 @@ import consts.Parameters._
 import consts.Paging._
 
 class PTE extends Bundle {
-  val ppn = UInt(PPN_WIDTH.W)
-  val rsw = UInt(2.W)
-  val d   = Bool()
-  val a   = Bool()
-  val g   = Bool()
-  val u   = Bool()
-  val x   = Bool()
-  val w   = Bool()
-  val r   = Bool()
-  val v   = Bool()
+  val ppn = UInt(PPN_WIDTH.W)       // PPN_WIDTH = 22，包含物理页号，物理地址一部分
+  val rsw = UInt(2.W)               // 留给操作系统使用，被硬件忽略
+  val d   = Bool()                  // 表示自从上次清除 D 位以来页面是否被弄脏
+  val a   = Bool()                  // 表示自从上次 A 位被清除以来，该页面是否被访问过
+  val g   = Bool()                  // 表示这个映射是否对所有虚拟地址空间是否有效
+  val u   = Bool()                  // 表示该页是否是用户页面
+  val x   = Bool()                  // 该页是否可以执行
+  val w   = Bool()                  // 该页是否可以写入
+  val r   = Bool()                  // 该页是否可以读取
+  val v   = Bool()                  // 该页表项的其余部分是否有效
 
   def asTlbEntry() = {
     val entry = Wire(new TlbEntry)

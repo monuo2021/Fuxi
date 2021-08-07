@@ -35,13 +35,13 @@ class TLB(val size: Int) extends Module {
   // all TLB entries
   val valid = RegInit(VecInit(Seq.fill(size) { false.B }))
   val data  = Mem(size, new Bundle {
-    val vpn   = UInt(VPN_WIDTH.W)
+    val vpn   = UInt(VPN_WIDTH.W)                               // VPN_WIDTH = 20
     val entry = new TlbEntry
   })
 
   // pointer to the TLB entry to be written
   val pointer = RegInit(0.U(width.W))
-  val vpn     = io.vaddr(ADDR_WIDTH - 1, PAGE_OFFSET_WIDTH)
+  val vpn     = io.vaddr(ADDR_WIDTH - 1, PAGE_OFFSET_WIDTH)     // PAGE_OFFSET_WIDTH = 12
 
   // TLB flush/write
   when (io.flush) {
