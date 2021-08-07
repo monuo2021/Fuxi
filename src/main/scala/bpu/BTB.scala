@@ -46,7 +46,7 @@ class BTB extends Module {
   }
 
   // signals about BTB lookup
-  val lookupIndex = io.lookupPc(BTB_INDEX_WIDTH + ADDR_ALIGN_WIDTH - 1,
+  val lookupIndex = io.lookupPc(BTB_INDEX_WIDTH + ADDR_ALIGN_WIDTH - 1,         // BTB_INDEX_WIDTH = 6
                                 ADDR_ALIGN_WIDTH)
   val lookupPcSel = io.lookupPc(ADDR_WIDTH - 1,
                                 BTB_INDEX_WIDTH + ADDR_ALIGN_WIDTH)
