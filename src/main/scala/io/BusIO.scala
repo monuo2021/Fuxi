@@ -28,7 +28,7 @@ class TlbControlIO(val ppnWidth: Int) extends Bundle {
   val basePpn   = Output(UInt(ppnWidth.W))
   // permit S-mode user memory access
   val sum       = Output(Bool())
-  val smode     = Output(Bool())
+  val smode     = Output(Bool())            // // SUM域用于控制在Supervisor Mode下是否被允许读写（Load和Store）用户（User）存储区域的数据
 }
 
 // cache control

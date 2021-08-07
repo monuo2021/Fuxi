@@ -39,7 +39,7 @@ class CsrFile extends Module {
   val mode      = RegInit(CSR_MODE_M)   // CSR_MODE_M = "b11".U(CSR_MODE_WIDTH.W)
 
   // definition of CSRs
-  val mstatus   = RegInit(MstatusCsr.default)
+  val mstatus   = RegInit(MstatusCsr.default)；
   val misa      = MisaCsr.default
   val medeleg   = RegInit(MedelegCsr.default)
   val mideleg   = RegInit(MidelegCsr.default)
@@ -256,7 +256,7 @@ class CsrFile extends Module {
     // handle trap
     when (io.except.isSret) {
       // return from S-mode
-      // update 'mstatus' because 'sstatus' is just wire
+      // update 'mstatus' because 'sstatus' is just wire  
       mstatus.sie   := mstatus.spie
       mstatus.spie  := true.B
       mstatus.spp   := false.B
@@ -297,8 +297,8 @@ class CsrFile extends Module {
   io.mepc     := mepc.asUInt
   io.trapVec  := trapVec
 
-  // paging signals
+  // paging signals，s-mode 提供
   io.pageEn   := !mode(1) && satp.mode
   io.basePpn  := satp.ppn
-  io.sum      := mstatus.sum
+  io.sum      := mstatus.sum              // SUM域用于控制在Supervisor Mode下是否被允许读写（Load和Store）用户（User）存储区域的数据
 }
