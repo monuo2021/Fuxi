@@ -39,7 +39,7 @@ class CsrFile extends Module {
   val mode      = RegInit(CSR_MODE_M)   // CSR_MODE_M = "b11".U(CSR_MODE_WIDTH.W)
 
   // definition of CSRs
-  val mstatus   = RegInit(MstatusCsr.default)；
+  val mstatus   = RegInit(MstatusCsr.default)
   val misa      = MisaCsr.default
   val medeleg   = RegInit(MedelegCsr.default)
   val mideleg   = RegInit(MidelegCsr.default)
