@@ -19,7 +19,7 @@ class PHT extends Module {
   })
 
   // 2-bit saturation counters，2bit饱和计数器
-  val init      = Seq.fill(PHT_SIZE) { "b10".U(2.W) }     // PHT_SIZE = 1 << GHR_WIDTH。生成序列，第一个接收Int类型的对象，表示序列的元素个数；第二个是传名参数，接收序列的元素。'b10'表示默认为弱不跳转
+  val init      = Seq.fill(PHT_SIZE) { "b10".U(2.W) }     // PHT_SIZE = 1 << GHR_WIDTH。生成序列，第一个接收Int类型的对象，表示序列的元素个数；第二个是传名参数，接收序列的元素。'b10'表示默认为弱跳转
   val counters  = RegInit(VecInit(init))
 
   // update counter
@@ -43,5 +43,5 @@ class PHT extends Module {
   }
 
   // generate output
-  io.taken := counters(io.index)(1)     // 判断是否跳转
+  io.taken := counters(io.index)(1)     // 判断是否跳转，取taken的高位
 }
